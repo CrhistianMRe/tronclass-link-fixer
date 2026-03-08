@@ -96,6 +96,19 @@ function fixHomeworkLinks() {
 }
 
 
+// 8. openActivity(exam, false, 'exam') — /course/.../exam _ exam list
+function fixExamLinks() {
+
+  document.querySelectorAll("a[ng-click=\"openActivity(exam, false, 'exam')\"]").forEach(el => {
+    if (el.getAttribute("href")) return;
+    const scope = angular.element(el).scope();
+    if (!scope?.exam) return;
+    const courseId = window.location.pathname.split("/")[2];
+    el.setAttribute("href", `/course/${courseId}/learning-activity#/exam/${scope.exam.id}`);
+  });
+
+}
+
 function fixLinks() {
   fixTodoLinks();
   fixHomeworkNotifications();
@@ -103,6 +116,7 @@ function fixLinks() {
   fixTeachingUnitLinks();
   fixContentActivityLinks();
   fixHomeworkLinks();
+  fixExamLinks();
 }
 
 const observer = new MutationObserver(fixLinks);
