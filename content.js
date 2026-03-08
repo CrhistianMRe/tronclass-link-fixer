@@ -39,11 +39,26 @@ function fixActivityNotifications() {
 
 }
 
+// 4. linkToTeachingUnit(n.payload) — /user/index blog type link activity
+function fixTeachingUnitLinks() {
+
+  document.querySelectorAll("a[ng-click='linkToTeachingUnit(n.payload)']").forEach(el => {
+    if (el.getAttribute("href")) return;
+    const scope = angular.element(el).scope();
+    if (scope?.n?.payload) {
+      const { course_id } = scope.n.payload;
+      el.setAttribute("href", `/course/${course_id}/content#/`);
+    }
+  });
+
+}
+
 
 function fixLinks() {
   fixTodoLinks();
   fixHomeworkNotifications();
   fixActivityNotifications();
+  fixTeachingUnitLinks();
 }
 
 const observer = new MutationObserver(fixLinks);
