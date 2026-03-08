@@ -67,6 +67,34 @@ function fixContentActivityLinks() {
 
 }
 
+// 6. openActivity(homework, false) in <a> _ /course/.../homework
+// 7. openActivity(homework, false) in <div> — add title with <a> _ /course/.../homework
+function fixHomeworkLinks() {
+
+  document.querySelectorAll("a[ng-click='openActivity(homework, false)']").forEach(el => {
+    if (el.getAttribute("href")) return;
+    const scope = angular.element(el).scope();
+    if (scope?.homework) {
+      const { teaching_unit_id, id } = scope.homework;
+      el.setAttribute("href", `/course/${teaching_unit_id}/learning-activity#/${id}`);
+    }
+  });
+
+  document.querySelectorAll("div[ng-click='openActivity(homework, false)']").forEach(el => {
+    const scope = angular.element(el).scope();
+    if (!scope?.homework) return;
+    const { teaching_unit_id, id } = scope.homework;
+    const url = `/course/${teaching_unit_id}/learning-activity#/${id}`;
+    const titleSpan = el.querySelector(".shorten-title");
+    if (!titleSpan || titleSpan.parentElement.tagName === "A") return;
+    const a = document.createElement("a");
+    a.href = url;
+    titleSpan.parentNode.insertBefore(a, titleSpan);
+    a.appendChild(titleSpan);
+  });
+
+}
+
 
 function fixLinks() {
   fixTodoLinks();
@@ -74,6 +102,7 @@ function fixLinks() {
   fixActivityNotifications();
   fixTeachingUnitLinks();
   fixContentActivityLinks();
+  fixHomeworkLinks();
 }
 
 const observer = new MutationObserver(fixLinks);
