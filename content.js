@@ -25,9 +25,25 @@ function fixHomeworkNotifications() {
 
 }
 
+// 3. linkToActivity(n.payload) — /user/index activity notifications
+function fixActivityNotifications() {
+
+  document.querySelectorAll("a[ng-click='linkToActivity(n.payload)']").forEach(el => {
+    if (el.getAttribute("href")) return;
+    const scope = angular.element(el).scope();
+    if (scope?.n?.payload) {
+      const { course_id, activity_id } = scope.n.payload;
+      el.setAttribute("href", `/course/${course_id}/learning-activity#/${activity_id}`);
+    }
+  });
+
+}
+
+
 function fixLinks() {
   fixTodoLinks();
   fixHomeworkNotifications();
+  fixActivityNotifications();
 }
 
 const observer = new MutationObserver(fixLinks);
