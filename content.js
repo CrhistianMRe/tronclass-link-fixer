@@ -53,12 +53,27 @@ function fixTeachingUnitLinks() {
 
 }
 
+// 5. a.title in /course/.../content _ content page
+function fixContentActivityLinks() {
+
+  document.querySelectorAll("a.title[ng-bind='activity.title']").forEach(el => {
+    if (el.getAttribute("href")) return;
+    const scope = angular.element(el).scope();
+    if (scope?.activity) {
+      const { course_id, id } = scope.activity;
+      el.setAttribute("href", `/course/${course_id}/learning-activity#/${id}`);
+    }
+  });
+
+}
+
 
 function fixLinks() {
   fixTodoLinks();
   fixHomeworkNotifications();
   fixActivityNotifications();
   fixTeachingUnitLinks();
+  fixContentActivityLinks();
 }
 
 const observer = new MutationObserver(fixLinks);
